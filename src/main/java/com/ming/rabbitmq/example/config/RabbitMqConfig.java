@@ -3,7 +3,9 @@ package com.ming.rabbitmq.example.config;
 import com.ming.rabbitmq.example.config.callback.MsgConfirmCallback;
 import com.ming.rabbitmq.example.config.callback.MsgReturnCallback;
 import com.ming.rabbitmq.example.config.constant.Constants;
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
@@ -21,10 +23,16 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfig {
 
     @Autowired
-    private Queue testQueue;
+    private QueueConfig queueConfig;
 
     @Autowired
-    private DirectExchange testDirectExchange;
+    private ExchangeConfig exchangeConfig;
+
+//    @Autowired
+//    private Queue testQueue;
+//
+//    @Autowired
+//    private DirectExchange testDirectExchange;
 
     @Autowired
     private ConnectionFactory connectionFactory;
@@ -34,7 +42,7 @@ public class RabbitMqConfig {
      */
     @Bean
     public Binding testBind() {
-        return BindingBuilder.bind(testQueue).to(testDirectExchange).with(Constants.ROUTING_KEY);
+        return BindingBuilder.bind(queueConfig.testQueue()).to(exchangeConfig.testDirectExchange()).with(Constants.ROUTING_KEY);
     }
 
     /**
@@ -44,9 +52,9 @@ public class RabbitMqConfig {
      * @return SimpleMessageListenerContainer
      */
     @Bean
-    public SimpleMessageListenerContainer testSimpleMessageListenerContainer() {
+    public SimpleMessageListenerContainer simpleMessageListenerContainerTest() {
         SimpleMessageListenerContainer simpleMessageListenerContainer = new SimpleMessageListenerContainer(connectionFactory);
-        simpleMessageListenerContainer.addQueues(testQueue);
+        simpleMessageListenerContainer.addQueues(queueConfig.testQueue());
         simpleMessageListenerContainer.setExposeListenerChannel(true);
         simpleMessageListenerContainer.setMaxConcurrentConsumers(5);
         simpleMessageListenerContainer.setConcurrentConsumers(1);
