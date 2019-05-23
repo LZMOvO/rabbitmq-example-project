@@ -16,6 +16,6 @@ public class ExchangeConfig {
 
     @Bean
     public DirectExchange testDirectExchange() {
-        return new DirectExchange(Constants.EXCHANGE_NAME, true, false);
+        return new DirectExchange(Constants.EXCHANGE_NAME, false, false);
     }
 }

@@ -3,9 +3,7 @@ package com.ming.rabbitmq.example.config;
 import com.ming.rabbitmq.example.config.callback.MsgConfirmCallback;
 import com.ming.rabbitmq.example.config.callback.MsgReturnCallback;
 import com.ming.rabbitmq.example.config.constant.Constants;
-import org.springframework.amqp.core.AcknowledgeMode;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
@@ -23,51 +21,31 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfig {
 
     @Autowired
-    private QueueConfig queueConfig;
+    private Queue testQueue;
 
     @Autowired
-    private ExchangeConfig exchangeConfig;
-
-//    @Autowired
-//    private Queue testQueue;
-//
-//    @Autowired
-//    private DirectExchange testDirectExchange;
+    private DirectExchange testDirectExchange;
 
     @Autowired
     private ConnectionFactory connectionFactory;
 
-    /**
-     * 将消息队列和交换机进行绑定
-     */
     @Bean
     public Binding testBind() {
-        return BindingBuilder.bind(queueConfig.testQueue()).to(exchangeConfig.testDirectExchange()).with(Constants.ROUTING_KEY);
+        return BindingBuilder.bind(testQueue).to(testDirectExchange).with(Constants.ROUTING_KEY);
     }
 
-    /**
-     * queue listener  观察 监听模式
-     * 当有消息到达时会通知监听在对应的队列上的监听对象
-     *
-     * @return SimpleMessageListenerContainer
-     */
-    @Bean
-    public SimpleMessageListenerContainer simpleMessageListenerContainerTest() {
-        SimpleMessageListenerContainer simpleMessageListenerContainer = new SimpleMessageListenerContainer(connectionFactory);
-        simpleMessageListenerContainer.addQueues(queueConfig.testQueue());
-        simpleMessageListenerContainer.setExposeListenerChannel(true);
-        simpleMessageListenerContainer.setMaxConcurrentConsumers(5);
-        simpleMessageListenerContainer.setConcurrentConsumers(1);
-        // 设置确认模式手工确认
-        simpleMessageListenerContainer.setAcknowledgeMode(AcknowledgeMode.MANUAL);
-        return simpleMessageListenerContainer;
-    }
+//    @Bean
+//    public SimpleMessageListenerContainer simpleMessageListenerContainerTest() {
+//        SimpleMessageListenerContainer simpleMessageListenerContainer = new SimpleMessageListenerContainer(connectionFactory);
+//        simpleMessageListenerContainer.addQueues(testQueue);
+//        simpleMessageListenerContainer.setExposeListenerChannel(true);
+//        simpleMessageListenerContainer.setMaxConcurrentConsumers(5);
+//        simpleMessageListenerContainer.setConcurrentConsumers(1);
+//        // 设置确认模式手工确认
+//        simpleMessageListenerContainer.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+//        return simpleMessageListenerContainer;
+//    }
 
-    /**
-     * 定义rabbit template用于数据的接收和发送
-     *
-     * @return RabbitTemplate
-     */
     @Bean
     public RabbitTemplate testRabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
