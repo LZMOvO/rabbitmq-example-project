@@ -27,7 +27,11 @@ public class Consumer {
     public void handleMessage(String hello, Channel channel, Message message) throws Exception {
         try {
             // 告诉服务器收到这条消息 已经被我消费了 可以在队列删掉 这样以后就不会再发了 否则消息服务器以为这条消息没处理掉 后续还会在发
-            if ("6666".equals(hello)) {
+            if (message.getMessageProperties().getRedelivered()) {
+                logger.info(message.getMessageProperties().getDeliveryTag() + "重试了");
+                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+            }
+            if ("666".equals(hello)) {
                 channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
             } else {
                 channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
@@ -37,8 +41,9 @@ public class Consumer {
             e.printStackTrace();
             channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
             System.out.println("receiver fail");
+        } finally {
+            channel.close();
         }
-
     }
 
 }
