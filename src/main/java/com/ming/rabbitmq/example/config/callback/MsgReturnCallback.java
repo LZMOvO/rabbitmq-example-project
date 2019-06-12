@@ -15,6 +15,6 @@ public class MsgReturnCallback implements ReturnCallback {
     public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
         System.out.println("MsgReturnCallback , " + message.toString() + "===replyCode:" + replyCode + "===replyText:"
                 + replyText + "===routingKey:" + routingKey);
-        // TODO 消息从交换机到队列失败，重新发送消息的处理
+        // TODO 消息从交换机到队列失败，重新发送消息的处理1234
     }
 }
